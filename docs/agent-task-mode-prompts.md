@@ -12,7 +12,7 @@ Repo áp dụng:
 |---|---|
 | Repo | `D:\APU\project\ginsengfood-FE` |
 | App root | `front-end/` |
-| Framework | React 19 + TypeScript + Vite |
+| Framework | Next.js 16 + React 19 + TypeScript (App Router) |
 | Package manager | npm |
 | Styling | Tailwind CSS + Botanical Archive design system |
 | HTTP client chuẩn | Axios |
@@ -71,7 +71,7 @@ Codex được phép tạo/sửa file chỉ sau khi đã:
 
 Trước khi làm, Codex phải tham khảo `DESIGN.md`, `docs/ai/README.md`,
 `docs/ai/rule-index.md`, `docs/ai/skill-index.md`, và các `.github/instructions/*.md`
-phù hợp để hiểu domain frontend, Botanical Archive design system, cấu trúc thư mục,
+phù hợp để hiểu domain frontend, Botanical Archive design system, cấu trúc thư mục/assets,
 API convention và verification convention.
 
 #### Codex Q4
@@ -106,7 +106,7 @@ Claude được phép tạo/sửa file chỉ sau khi đã:
 
 Trước khi làm, Claude phải tham khảo `DESIGN.md`, `docs/ai/README.md`,
 `docs/ai/rule-index.md`, `docs/ai/skill-index.md`, và các `.github/instructions/*.md`
-phù hợp để hiểu domain frontend, Botanical Archive design system, cấu trúc thư mục,
+phù hợp để hiểu domain frontend, Botanical Archive design system, cấu trúc thư mục/assets,
 API convention và verification convention.
 
 #### Claude Q4
@@ -122,106 +122,7 @@ Dùng prompt này khi muốn Codex chỉ đọc, review, cho ý kiến về code
 được sửa file.
 
 ```text
-Bạn là Codex làm việc trong repo `D:\APU\project\ginsengfood-FE`.
-
-CHẾ ĐỘ BẮT BUỘC: REVIEW-ONLY / READ-ONLY ADVISORY MODE
-
-Trong task này, bạn chỉ được:
-- Đọc file, tìm kiếm, phân tích, review code/UI/API integration, tổng hợp thông tin.
-- Đưa ra finding, ý kiến kỹ thuật, rủi ro, trade-off, và kế hoạch sửa.
-- Đưa proposed diff hoặc snippet trong câu trả lời nếu cần.
-- Đề xuất lệnh verify để người dùng tự chạy.
-
-Bạn không được:
-- Tạo file, xóa file, sửa file, format file, apply patch, hoặc ghi bất kỳ output nào vào working tree.
-- Chạy lệnh có khả năng ghi output vào repo hoặc môi trường, gồm build/test tạo output, install dependency, git add, git commit, git push.
-- Chạy lệnh phá hủy: git reset --hard, git clean -fd, rm -rf, force push, broad permission changes.
-- Sửa trực tiếp code ngay cả khi thấy lỗi rõ ràng. Hãy đưa proposed diff/thay đổi để người dùng tự áp dụng.
-
-TRƯỚC KHI REVIEW, BẮT BUỘC LÀM PREFLIGHT:
-
-1. Đọc instruction và rule hiện có:
-   - `AGENTS.md`
-   - `.codex/config.toml`
-   - `.codex/rules/*` nếu tồn tại
-   - `.github/instructions/*.instructions.md` liên quan đến task
-   - `.github/prompts/*.prompt.md` nếu task trùng với prompt có sẵn
-
-2. Đọc skill liên quan:
-   - Liệt kê `.agents/skills/*/SKILL.md`.
-   - Chọn và đọc skill phù hợp với task:
-     - Setup nền tảng, Tailwind, Axios, cấu trúc `src/`: `frontend-foundation`
-     - Tạo page/screen/route mới: `screen-delivery`
-     - API/DTO/adapter/Axios/hook: `api-client-and-contracts`
-     - Shared UI/component consistency: `shared-ui-patterns`
-     - Chuyển HTML/Tailwind prototype sang React: `html-to-react-tailwind-conversion`
-     - Verify/handoff: `testing-and-verification`
-
-3. Đọc tài liệu nền tảng:
-   - `front-end/package.json`
-   - `front-end/vite.config.ts`
-   - `front-end/src/` để hiểu code hiện có
-   - `DESIGN.md` nếu task chạm UI, Tailwind, layout, component, visual consistency
-   - `test.html` nếu task liên quan storefront visual reference hoặc HTML conversion
-   - `docs/ai/README.md`
-   - `docs/ai/rule-index.md`
-   - `docs/ai/skill-index.md`
-
-4. Tham khảo GitNexus:
-   - Đọc `.gitnexus/meta.json`.
-   - Nếu MCP/resource có sẵn, đọc `gitnexus://repo/ginsengfood-FE/context`.
-   - Dùng GitNexus query/context để tìm code liên quan khi review code.
-   - Khi nhận xét về việc sửa symbol cũ, chạy impact analysis upstream nếu tool có sẵn và báo cáo risk/direct callers/affected processes.
-   - Nếu index stale, báo cho người dùng và đề xuất `npx gitnexus analyze`; không tự chạy lệnh ghi vào `.gitnexus` trong read-only mode.
-
-5. Kiểm tra repo state bằng lệnh chỉ đọc:
-   - `git status --short`
-   - `git diff -- <file>` nếu review thay đổi hiện có
-   - `rg --files` hoặc lệnh đọc tương đương để định vị file cần đọc
-
-KHI REVIEW, ÁP DỤNG PROJECT CONVENTION:
-
-- App root là `front-end/`; chạy npm từ `front-end/`.
-- Package manager là npm; không đề xuất yarn/pnpm.
-- React functional components + TypeScript, không class component.
-- Tailwind utility classes là chuẩn styling; không tạo CSS mới cho UI.
-- UI phải theo Botanical Archive trong `DESIGN.md`: semantic tokens, crimson/gold/green/warm paper, không raw hex trong JSX, không default blue UI.
-- API phải dùng Axios qua shared client; không dùng raw `fetch`.
-- Không đoán backend contract. Nếu thiếu contract, DTO phải có TODO rõ ràng.
-- Router chưa được giả định là có sẵn; kiểm tra dependency trước khi đề xuất route.
-- Không nói có test script nếu `front-end/package.json` không có.
-- Nếu task chạm endpoint/DTO/API contract, nêu backend repo cần cung cấp/cập nhật contract tương ứng.
-
-KHI TRẢ LỜI, GIỮ OUTPUT GỌN:
-
-- Không liệt kê mục `Đã tham khảo`, danh sách rule/config/docs/skill đã đọc, hoặc GitNexus query/context đã dùng, trừ khi người dùng hỏi rõ.
-- Không mở đầu bằng báo cáo preflight dài. Chỉ nói ngắn `Đã preflight nội bộ` nếu thật cần thiết.
-- Chỉ nêu repo context khi nó ảnh hưởng trực tiếp đến finding hoặc đề xuất.
-- Tập trung vào kết quả review và hành động tiếp theo.
-
-BẮT BUỘC CÓ CÁC MỤC:
-
-1. `Review findings`
-   - Ưu tiên bug, regression, sai API contract, sai folder/layer, UI lệch design system, thiếu state loading/error/empty/success, thiếu verify.
-   - Sắp xếp theo mức độ nghiêm trọng.
-   - Dẫn file path và line nếu có.
-
-2. `Đề xuất sửa`
-   - Đưa hướng sửa, file nên sửa, snippet/proposed diff nếu cần.
-   - Không apply patch.
-
-3. `Rủi ro và lưu ý`
-   - Nêu backend repo cần cập nhật nếu task chạm endpoint/DTO/API contract.
-   - Nêu GitNexus stale, impact HIGH/CRITICAL, thiếu context, dirty changes liên quan, hoặc blocker thật sự nếu có.
-   - Bỏ qua mục này nếu không có rủi ro/lưu ý đáng kể.
-
-4. `Kiểm tra đề xuất`
-   - Đưa lệnh verify gần nhất để người dùng tự chạy:
-     - `cd front-end && npm run lint`
-     - `cd front-end && npm run build`
-   - Nói rõ lệnh nào chưa chạy vì read-only mode.
-
-Ngôn ngữ trả lời: tiếng Việt, ngắn gọn, có dẫn chứng file path cụ thể.
+D
 ```
 
 ---
@@ -268,7 +169,7 @@ TRƯỚC KHI IMPLEMENT, BẮT BUỘC LÀM PREFLIGHT:
 
 3. Đọc tài liệu nền tảng:
    - `front-end/package.json`
-   - `front-end/vite.config.ts`
+   - `front-end/next.config.ts`
    - `front-end/src/` để hiểu code hiện có
    - Full content của bất kỳ file nào định sửa
    - `DESIGN.md` nếu task chạm UI, Tailwind, layout, component, visual consistency
@@ -304,8 +205,13 @@ KHI IMPLEMENT, ÁP DỤNG PROJECT CONVENTION:
 - React functional components + TypeScript, props/type rõ ràng, không `any`.
 - Folder structure theo `AGENTS.md`: `src/app`, `src/features`, `src/shared`, `src/api`.
 - Tổ chức theo business module trước; UI chia `storefront/` và `admin/` khi cần.
+- Ảnh/static assets phải đặt theo owner gần nhất: `src/assets`, `src/features/<module>/assets`, `storefront/assets`, `admin/assets`, hoặc `src/shared/assets`.
+- Chỉ dùng `front-end/public/` cho file cần public URL ổn định như favicon, robots.txt, manifest, Open Graph image, hoặc file được tham chiếu ngoài React bundle.
+- Ảnh dùng trong React UI phải import qua module system; không hardcode `/src/...`.
+- Không dồn ảnh riêng của feature vào `src/assets/` theo mặc định.
+- Asset filenames dùng kebab-case mô tả; ưu tiên `.webp`/`.avif` cho ảnh, `.svg` cho logo/icon.
 - Tailwind utility classes là chuẩn styling; không tạo CSS mới cho UI.
-- UI phải theo Botanical Archive trong `DESIGN.md`: semantic tokens, no raw hex in JSX, no default blue UI, preserve `front-end/src/index.css` custom properties.
+- UI phải theo Botanical Archive trong `DESIGN.md`: semantic tokens, no raw hex in JSX, no default blue UI, preserve `front-end/src/app/globals.css` custom properties.
 - API phải dùng Axios qua `src/api/client.ts`; không đặt Axios/raw request trực tiếp trong component.
 - DTO nằm trong `src/api/dto/`, adapter nằm trong `src/api/adapters/`, service/hook tách khỏi JSX.
 - Không đoán backend contract. Nếu thiếu contract, DTO placeholder phải có `// TODO: replace with real API contract when available`.
@@ -327,6 +233,7 @@ KHI TRẢ LỜI SAU TASK, DÙNG FORMAT:
 
 ### Files created or modified
 - `path/to/file` — thay đổi gì và vì sao
+- Asset owner: app | shared | module | storefront | admin | public, nếu task có tạo hoặc di chuyển ảnh/assets
 
 ### Verification
 - `npm run lint`: PASSED / FAILED / SKIPPED kèm lý do
@@ -390,7 +297,7 @@ TRƯỚC KHI REVIEW, BẮT BUỘC LÀM PREFLIGHT:
 
 3. Đọc tài liệu nền tảng:
    - `front-end/package.json`
-   - `front-end/vite.config.ts`
+   - `front-end/next.config.ts`
    - `front-end/src/` để hiểu code hiện có
    - `DESIGN.md` nếu task chạm UI, Tailwind, layout, component, visual consistency
    - `test.html` nếu task liên quan storefront visual reference hoặc HTML conversion
@@ -417,6 +324,11 @@ KHI REVIEW, ÁP DỤNG PROJECT CONVENTION:
 - React functional components + TypeScript, không class component.
 - Tailwind utility classes là chuẩn styling; không tạo CSS mới cho UI.
 - UI phải theo Botanical Archive trong `DESIGN.md`: semantic tokens, crimson/gold/green/warm paper, không raw hex trong JSX, không default blue UI.
+- Ảnh/static assets phải đặt theo owner gần nhất: `src/assets`, `src/features/<module>/assets`, `storefront/assets`, `admin/assets`, hoặc `src/shared/assets`.
+- Chỉ dùng `front-end/public/` cho file cần public URL ổn định như favicon, robots.txt, manifest, Open Graph image, hoặc file được tham chiếu ngoài React bundle.
+- Ảnh dùng trong React UI phải import qua module system; không hardcode `/src/...`.
+- Không dồn ảnh riêng của feature vào `src/assets/` theo mặc định.
+- Asset filenames dùng kebab-case mô tả; ưu tiên `.webp`/`.avif` cho ảnh, `.svg` cho logo/icon.
 - API phải dùng Axios qua shared client; không dùng raw `fetch`.
 - Không đoán backend contract. Nếu thiếu contract, DTO phải có TODO rõ ràng.
 - Router chưa được giả định là có sẵn; kiểm tra dependency trước khi đề xuất route.
@@ -433,7 +345,7 @@ KHI TRẢ LỜI, GIỮ OUTPUT GỌN:
 BẮT BUỘC CÓ CÁC MỤC:
 
 1. `Review findings`
-   - Ưu tiên bug, regression, sai API contract, sai folder/layer, UI lệch design system, thiếu state loading/error/empty/success, thiếu verify.
+   - Ưu tiên bug, regression, sai API contract, sai folder/layer, sai vị trí ảnh/assets, UI lệch design system, thiếu state loading/error/empty/success, thiếu verify.
    - Sắp xếp theo mức độ nghiêm trọng.
    - Dẫn file path và line nếu có.
 
@@ -503,7 +415,7 @@ TRƯỚC KHI IMPLEMENT, BẮT BUỘC LÀM PREFLIGHT:
 
 3. Đọc tài liệu nền tảng:
    - `front-end/package.json`
-   - `front-end/vite.config.ts`
+   - `front-end/next.config.ts`
    - `front-end/src/` để hiểu code hiện có
    - Full content của bất kỳ file nào định sửa
    - `DESIGN.md` nếu task chạm UI, Tailwind, layout, component, visual consistency
@@ -539,8 +451,13 @@ KHI IMPLEMENT, ÁP DỤNG PROJECT CONVENTION:
 - React functional components + TypeScript, props/type rõ ràng, không `any`.
 - Folder structure theo `AGENTS.md`: `src/app`, `src/features`, `src/shared`, `src/api`.
 - Tổ chức theo business module trước; UI chia `storefront/` và `admin/` khi cần.
+- Ảnh/static assets phải đặt theo owner gần nhất: `src/assets`, `src/features/<module>/assets`, `storefront/assets`, `admin/assets`, hoặc `src/shared/assets`.
+- Chỉ dùng `front-end/public/` cho file cần public URL ổn định như favicon, robots.txt, manifest, Open Graph image, hoặc file được tham chiếu ngoài React bundle.
+- Ảnh dùng trong React UI phải import qua module system; không hardcode `/src/...`.
+- Không dồn ảnh riêng của feature vào `src/assets/` theo mặc định.
+- Asset filenames dùng kebab-case mô tả; ưu tiên `.webp`/`.avif` cho ảnh, `.svg` cho logo/icon.
 - Tailwind utility classes là chuẩn styling; không tạo CSS mới cho UI.
-- UI phải theo Botanical Archive trong `DESIGN.md`: semantic tokens, no raw hex in JSX, no default blue UI, preserve `front-end/src/index.css` custom properties.
+- UI phải theo Botanical Archive trong `DESIGN.md`: semantic tokens, no raw hex in JSX, no default blue UI, preserve `front-end/src/app/globals.css` custom properties.
 - API phải dùng Axios qua `src/api/client.ts`; không đặt Axios/raw request trực tiếp trong component.
 - DTO nằm trong `src/api/dto/`, adapter nằm trong `src/api/adapters/`, service/hook tách khỏi JSX.
 - Không đoán backend contract. Nếu thiếu contract, DTO placeholder phải có `// TODO: replace with real API contract when available`.
@@ -562,6 +479,7 @@ KHI TRẢ LỜI SAU TASK, DÙNG FORMAT:
 
 ### Files created or modified
 - `path/to/file` — thay đổi gì và vì sao
+- Asset owner: app | shared | module | storefront | admin | public, nếu task có tạo hoặc di chuyển ảnh/assets
 
 ### Verification
 - `npm run lint`: PASSED / FAILED / SKIPPED kèm lý do
@@ -587,6 +505,8 @@ Ngôn ngữ trả lời: tiếng Việt, ngắn gọn, có dẫn chứng file pa
   Q2-EDIT để mở quyền edit có giới hạn.
 - Với UI task, luôn yêu cầu đọc `DESIGN.md`; nếu task chuyển từ prototype, đọc thêm
   `test.html`.
+- Với task tạo/chỉnh ảnh hoặc static assets, luôn yêu cầu đặt theo owner gần nhất, chỉ dùng
+  `front-end/public/` khi cần public URL ổn định, và import ảnh UI qua module system.
 - Với API/DTO/endpoint, luôn yêu cầu không đoán contract và nhắc backend repo cần cập nhật
   hoặc cung cấp contract tương ứng.
 - Với task sửa symbol cũ, bắt buộc yêu cầu GitNexus impact analysis trước khi edit. Nếu

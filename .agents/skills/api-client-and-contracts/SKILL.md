@@ -50,7 +50,7 @@ hooks that components consume.
 3. `front-end/src/api/dto/` — existing DTO patterns
 4. `front-end/src/api/adapters/` — existing adapter patterns
 5. The feature's existing `api.ts` and `hooks/` if they exist
-6. `.env` / `.env.local` — confirm `VITE_API_BASE_URL` is set
+6. `.env` / `.env.local` — confirm `NEXT_PUBLIC_API_BASE_URL` is set
 
 ---
 
@@ -58,7 +58,7 @@ hooks that components consume.
 
 ### Axios client (`src/api/client.ts`)
 - [ ] Created if not present
-- [ ] Uses `import.meta.env.VITE_API_BASE_URL` as `baseURL`
+- [ ] Uses `process.env.NEXT_PUBLIC_API_BASE_URL` as `baseURL`
 - [ ] No hardcoded URLs
 - [ ] Auth interceptor added if authentication is required
 
@@ -66,7 +66,7 @@ hooks that components consume.
 import axios from 'axios';
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 
 // Add auth interceptor when needed:

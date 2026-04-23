@@ -17,7 +17,7 @@ using this project's Axios client, DTO typing, adapter pattern, and hook convent
 2. Check if `front-end/src/api/client.ts` exists — if not, it must be created first.
 3. Read the existing feature's `api.ts` and `hooks/` folder — understand current patterns.
 4. Read the target component to understand what data it currently expects.
-5. Confirm the `.env` or `.env.local` file has `VITE_API_BASE_URL` set.
+5. Confirm the `.env` or `.env.local` file has `NEXT_PUBLIC_API_BASE_URL` set.
 
 ---
 
@@ -39,13 +39,13 @@ If the response contract is not available, state that — the agent will create 
 
 ## Implementation checklist
 
-- [ ] If `src/api/client.ts` does not exist: create it with `VITE_API_BASE_URL` base URL
+- [ ] If `src/api/client.ts` does not exist: create it with `NEXT_PUBLIC_API_BASE_URL` base URL
 - [ ] Define or update the DTO in `src/api/dto/<domain>.dto.ts`
 - [ ] Write or update the adapter in `src/api/adapters/<domain>.adapter.ts`
 - [ ] Write or update the service function in `src/api/<domain>.ts`
 - [ ] Write or update the hook in `src/features/<feature>/hooks/use<Data>.ts`
 - [ ] Update the component to use the hook (remove any hardcoded/mock data)
-- [ ] Add `VITE_API_BASE_URL=<placeholder>` to `.env.example` if that file exists
+- [ ] Add `NEXT_PUBLIC_API_BASE_URL=<placeholder>` to `.env.example` if that file exists
 - [ ] Handle loading, error, and empty states in the component (see rule 50)
 - [ ] Ensure all types are explicit — no `any` in DTO, adapter, or hook
 

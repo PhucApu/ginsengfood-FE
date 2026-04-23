@@ -19,6 +19,8 @@ to confirm a task is complete and the codebase is healthy.
 - After completing any implementation task before declaring done
 - When verifying that a change does not break the existing codebase
 - When reviewing the output of lint or build and diagnosing issues
+- After HTML/CSS/JS conversion tasks, but only after `html-conversion-visual-parity` has
+  passed or its failure has been reported.
 
 ---
 
@@ -42,11 +44,13 @@ Run all of these from the `front-end/` directory:
 
 ```bash
 npm run lint      # ESLint 9 flat config — catches TypeScript and React rule violations
-npm run build     # tsc -b + vite build — TypeScript compile + production bundle
-npm run dev       # dev server — manual smoke test for runtime behavior
+npm run build     # next build — TypeScript compile + production bundle
+npm run dev       # dev server (Turbopack) — manual smoke test for runtime behavior
+npm run start     # production server — run after build to preview final output
 ```
 
 > **No separate typecheck script exists.** TypeScript errors surface through `npm run build`.
+> **No `preview` script exists.** Use `npm run start` after `npm run build` to preview.
 > **No test script exists.** Do not invent or reference a `npm test` or `npm run test` command.
 
 ---
@@ -62,14 +66,20 @@ npm run dev       # dev server — manual smoke test for runtime behavior
 ### Build (includes TypeScript check)
 - [ ] Run: `npm run build`
 - [ ] No TypeScript compilation errors
-- [ ] Vite production bundle completes successfully
-- [ ] Output in `dist/` directory is generated (if build succeeds)
+- [ ] Next.js production bundle completes successfully
+- [ ] Output in `.next/` directory is generated (if build succeeds)
 
 ### Dev server smoke test (when runtime behavior needs confirmation)
 - [ ] Run: `npm run dev`
 - [ ] Target page renders without console errors
 - [ ] Loading, error, and empty states are reachable and render correctly
 - [ ] Data renders correctly when API is available (or mocked)
+
+### HTML conversion visual parity (when applicable)
+- [ ] Run the `html-conversion-visual-parity` workflow before final sign-off
+- [ ] Source and converted UI were compared at desktop, tablet, and mobile viewports
+- [ ] No unapproved user-visible differences remain
+- [ ] If parity failed or was blocked, report it and do not mark the conversion complete
 
 ---
 
@@ -124,7 +134,7 @@ npm uninstall <package-name>
 ### npm run build
 - Result: PASSED | FAILED
 - TypeScript errors: none | [list]
-- Vite build errors: none | [list]
+- Next.js build errors: none | [list]
 
 ### Dev server smoke test (if performed)
 - Result: PASSED | SKIPPED | FAILED

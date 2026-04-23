@@ -67,6 +67,29 @@ pages, modules, routes, API services, hooks, and shared UI components.
 
 ---
 
+## 26 - UI Component Boundaries
+
+**File:** `.github/instructions/26-ui-component-boundaries.instructions.md`
+**Applies to:** `front-end/src/**/*.{ts,tsx}`
+
+**What it does:**
+Defines how to decide whether a UI component is page-only, surface-specific,
+module-shared, app-shell, or reusable under `src/shared/components/`.
+
+**When it applies:**
+Any time UI components are created, extracted, moved, converted from HTML/CSS/JS, or
+reviewed for reuse boundaries.
+
+**Key rules:**
+- Default to the closest owner and promote later when reuse is real
+- Header, footer, and navbar are app-shell only when used by the whole app or surface
+- Shared UI must have generic props and no feature-specific imports, assets, API calls,
+  route paths, or business copy
+- During HTML conversion, keep source-specific sections near the target page first
+- Report `[BOUNDARY RISK]` for uncertain placement and `[PROMOTE LATER]` for future reuse
+
+---
+
 ## 30 — API Integration
 
 **File:** `.github/instructions/30-api-integration.instructions.md`
@@ -84,7 +107,55 @@ Any time code makes, modifies, or handles HTTP requests.
 - `src/api/client.ts` is the only Axios instance
 - DTOs typed in `src/api/dto/`, adapters in `src/api/adapters/`
 - Never guess API response shapes — use `// TODO: replace with real contract`
-- Base URL from `VITE_API_BASE_URL` environment variable
+- Base URL from `NEXT_PUBLIC_API_BASE_URL` environment variable
+
+---
+
+## 35 - HTML to React Tailwind Conversion
+
+**File:** `.github/instructions/35-html-to-react-tailwind-conversion.instructions.md`
+**Applies to:** `{**/*.html,front-end/src/**/*.{ts,tsx,css}}`
+
+**What it does:**
+Defines how to convert HTML/CSS/JS or Tailwind prototypes into React + TypeScript +
+Tailwind while preserving the source UI and protecting existing React UI already present
+under `front-end/src`.
+
+**When it applies:**
+Any time an HTML/CSS/JS UI is migrated, rebuilt, or converted into the project structure,
+especially when the target screen sits inside existing app layouts, feature components, or
+shared UI.
+
+**Key rules:**
+- Inventory source layout, colors, images, fonts, responsive behavior, and interactions
+- Inspect existing `front-end/src` UI before editing target files
+- Preserve current app shell, layout chrome, asset imports, typography, and stateful behavior
+- Keep source-specific converted components near the target feature/surface
+- Report `[EXISTING UI RISK]`, `[CONVERSION DEVIATION]`, and `[PROMOTE LATER]` when relevant
+
+---
+
+## 36 - HTML Conversion Visual Parity
+
+**File:** `.github/instructions/36-html-conversion-visual-parity.instructions.md`
+**Applies to:** `{**/*.html,front-end/src/**/*.{ts,tsx,css}}`
+
+**What it does:**
+Requires a post-conversion before/after visual parity check between the source
+HTML/prototype and the converted React + TypeScript + Tailwind screen. A conversion is not
+complete when unapproved visible differences remain.
+
+**When it applies:**
+Any time HTML/CSS/Tailwind/JS UI is converted into React, especially for 1:1 or faithful
+conversion tasks.
+
+**Key rules:**
+- Compare source and converted UI at desktop, tablet, and mobile viewports
+- Check layout, colors, typography, assets, text, responsive behavior, and interaction states
+- Use automated screenshot diffing when available, or manual side-by-side inspection when
+  no tooling is installed
+- Treat any unapproved user-visible difference as `[VISUAL PARITY FAILED]`
+- Report `[VISUAL BASELINE RISK]` when the original source cannot be rendered or recovered
 
 ---
 
@@ -105,7 +176,7 @@ Any time a `.tsx` file that renders JSX is created or modified.
 - Tailwind utility classes only for new UI, using design-system tokens
 - No raw hex colors, pure black text, or default blue/gray sample styling
 - Buttons, admin tables, chips, inputs, cards, and layouts follow Botanical Archive patterns
-- Existing `index.css` custom properties must be preserved
+- Existing `globals.css` custom properties must be preserved
 
 ---
 
@@ -150,6 +221,31 @@ Any time a component fetches data, submits a form, or performs an async operatio
 - Submit buttons disabled while in progress
 - Standard state variables: `loading`, `error`, `data`, `isSubmitting`
 - Feedback UI uses `DESIGN.md` semantic tokens
+
+---
+
+## 55 - Vietnamese Content Localization
+
+**File:** `.github/instructions/55-vietnamese-content-localization.instructions.md`
+**Applies to:** `front-end/src/**/*.{ts,tsx}`
+
+**What it does:**
+Defines how to translate or rewrite user-visible website copy into Vietnamese while
+preserving the existing React component structure, layout classes, data flow, routes, and
+interactions.
+
+**When it applies:**
+Any time displayed copy, labels, CTAs, navigation text, form copy, empty/error messages,
+alt text, aria labels, or local string arrays are localized to Vietnamese.
+
+**Key rules:**
+- Copy-only localization must not change layout, state logic, API contracts, routes, or
+  component structure
+- Translate rendered text and user-facing accessibility text only
+- Do not translate identifiers, API fields, route paths, Tailwind classes, asset filenames,
+  test selectors, or icon names
+- Preserve product, health, origin, certification, price, and discount claims
+- Report `[LOCALIZATION RISK]` if natural Vietnamese cannot fit safely without layout work
 
 ---
 

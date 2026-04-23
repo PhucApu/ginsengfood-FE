@@ -19,8 +19,8 @@ Botanical Archive design system, Tailwind token conventions, and shared componen
 3. Read `.github/instructions/45-design-system.instructions.md`.
 4. List all files in `front-end/src/features/` and `front-end/src/shared/components/`.
 5. Read every `.tsx` file that renders a table, button, form input, chip, badge, or dialog.
-6. Note: the existing `front-end/src/index.css` uses CSS custom properties; preserve them unless a dedicated token migration is in scope.
-7. Do not propose changes to the original Vite scaffold styles unless they conflict with new screens.
+6. Note: the existing `front-end/src/app/globals.css` uses CSS custom properties; preserve them unless a dedicated token migration is in scope.
+7. Do not propose changes to the original Next.js scaffold styles unless they conflict with new screens.
 
 ---
 

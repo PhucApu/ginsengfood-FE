@@ -38,7 +38,7 @@ src/api/
 import axios from 'axios';
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 ```
 
@@ -119,9 +119,9 @@ export function useProducts() {
 
 ## Environment variables
 
-- Base URL: `VITE_API_BASE_URL` — must be set in `.env` or `.env.local`.
+- Base URL: `NEXT_PUBLIC_API_BASE_URL` — must be set in `.env` or `.env.local`.
 - Never hardcode base URLs.
-- All Vite env vars must be prefixed with `VITE_`.
+- All Next.js browser-accessible env vars must be prefixed with `NEXT_PUBLIC_`.
 
 ---
 
@@ -153,5 +153,5 @@ export function useProducts() {
 - [ ] Service function written in `src/api/<domain>.ts`
 - [ ] Hook wraps service function in `src/features/<feature>/hooks/`
 - [ ] Component uses the hook, not the service function directly
-- [ ] Base URL read from `import.meta.env.VITE_API_BASE_URL`
+- [ ] Base URL read from `process.env.NEXT_PUBLIC_API_BASE_URL`
 - [ ] Error state handled and surfaced in UI

@@ -25,5 +25,9 @@ safe_git_mode = true
 lint_command = "npm run lint"
 build_command = "npm run build"
 
+[mcp_servers.gitnexus]
+command = "gitnexus"
+args = ["mcp"]
+
 # There is no test script in this repository. Do not invent one.
 test_command = ""

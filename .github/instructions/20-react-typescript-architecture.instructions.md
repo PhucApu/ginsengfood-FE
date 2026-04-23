@@ -16,12 +16,17 @@ Any time you create or modify a `.ts` or `.tsx` file under `front-end/src/`.
 
 ## Component boundaries
 
+Use rule 26 before extracting or moving UI components. A reusable-looking component should
+stay near its closest owner until real reuse proves it belongs at module, app-shell, or
+shared scope.
+
 ### Feature components
 - Live in `src/features/<module>/storefront/components/` or
   `src/features/<module>/admin/components/` when surface-specific.
 - Live in `src/features/<module>/components/` only when shared by both surfaces within
   the same module.
-- Route-level feature screens live in `src/features/<module>/<surface>/pages/`.
+- Route-level feature screens live in `src/app/(storefront)/<module>/page.tsx` or
+  `src/app/(admin)/<module>/page.tsx`. Feature folders hold UI components, not routes.
 - Responsible for one module and one application surface's UI and interaction logic.
 - May import from `src/shared/` but must not import from other features.
 
@@ -33,8 +38,10 @@ Any time you create or modify a `.ts` or `.tsx` file under `front-end/src/`.
 
 ### App shell
 - Lives in `src/app/`.
-- Contains: root layout, global providers, router bootstrap.
-- Must not contain feature-specific code.
+- Contains: root layout (`layout.tsx`), global providers (`providers.tsx`), route groups `(storefront)/` and `(admin)/`, and `middleware.ts` for route protection.
+- Route pages in `src/app/` are thin files that import and render feature components from `src/features/`.
+- Mark components as `'use client'` only when hooks, events, or browser APIs are needed. Default is Server Component.
+- Must not contain feature-specific business logic.
 
 ---
 
@@ -47,15 +54,15 @@ src/features/<module>/
   hooks/            # Custom hooks shared by this module
   components/       # Components shared by storefront/admin in this module only
   storefront/
-    pages/          # Customer-facing route components
-    components/     # Customer-facing module components
+    components/     # Customer-facing module components (imported by src/app/(storefront)/ pages)
     hooks/          # Customer-facing hooks, only when not shared by admin
   admin/
-    pages/          # Admin route components
-    components/     # Admin module components
+    components/     # Admin module components (imported by src/app/(admin)/ pages)
     hooks/          # Admin hooks, only when not shared by storefront
 ```
 
+Route pages (Next.js `page.tsx` files) live in `src/app/(storefront)/<module>/page.tsx` and
+`src/app/(admin)/<module>/page.tsx`. Feature folders do not contain Next.js route files.
 Do not mix these concerns. A component file must not also contain API service functions.
 Do not create top-level `src/user/` and `src/admin/` folders for business modules; organize
 by module first, then split UI by surface.

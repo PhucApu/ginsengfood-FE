@@ -27,7 +27,7 @@ Before making any change, identify:
 ## Change boundary rules
 
 ### Only change what is explicitly in scope
-- If the task is "add a product list page", do not also refactor `App.tsx` or reorganize `index.css`.
+- If the task is "add a product list page", do not also refactor `front-end/src/app` layout/page structure or reorganize `front-end/src/app/globals.css`.
 - If you notice a separate issue during work, document it as `[TODO]` — do not fix it now.
 
 ### Preserve working code
@@ -36,7 +36,7 @@ Before making any change, identify:
 - Do not rename or move files unless the task explicitly asks for it.
 
 ### Preserve existing styling conventions
-- Do not delete `front-end/src/index.css` or its CSS custom properties.
+- Do not delete `front-end/src/app/globals.css` or its CSS custom properties.
 - Do not remove existing class names from components you are not replacing.
 - When adding Tailwind, add alongside existing classes; do not remove old CSS on first introduction.
 
@@ -60,7 +60,6 @@ Do **not** fix it inline. Instead, document it:
 
 ```
 ### Deferred items
-- [TODO] front-end/src/App.tsx line 12 — unused import `useState` — can be removed in a cleanup task.
 ```
 
 ---

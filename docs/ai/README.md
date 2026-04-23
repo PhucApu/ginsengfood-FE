@@ -28,10 +28,12 @@ DESIGN.md                          ← canonical visual design system
   │     10-working-mode
   │     20-react-typescript-architecture
   │     25-project-structure
+  │     26-ui-component-boundaries
   │     30-api-integration
   │     40-ui-consistency
   │     45-design-system
   │     50-state-feedback
+  │     55-vietnamese-content-localization
   │     60-safe-change-boundaries
   │
   ├── .github/prompts/                  ← reusable task prompts for VS Code Copilot
@@ -44,6 +46,8 @@ DESIGN.md                          ← canonical visual design system
   │     screen-delivery/SKILL.md
   │     api-client-and-contracts/SKILL.md
   │     shared-ui-patterns/SKILL.md
+  │     ui-component-boundary-audit/SKILL.md
+  │     vietnamese-content-localization/SKILL.md
   │     testing-and-verification/SKILL.md
   │
   └── docs/ai/                          ← this documentation
@@ -63,15 +67,14 @@ competing conventions.
 
 | Concern | Tool |
 |---|---|
-| Framework | React 19 + TypeScript |
-| Build | Vite 8 |
+| Framework | **Next.js 16** + React 19 + TypeScript (App Router) |
+| Build | Next.js built-in bundler (Turbopack in dev) |
 | HTTP client | **Axios** — no raw fetch, no other HTTP libs |
-| Styling | **Tailwind CSS** — no new plain CSS files |
+| Styling | **Tailwind CSS v4** via `@tailwindcss/postcss` — no new plain CSS files |
 | Package manager | npm |
 
-> At the time of initial setup, Axios and Tailwind CSS were the declared project standards
-> but had not yet been installed. The instruction system treats them as the baseline and
-> provides setup guidance in the `frontend-foundation` skill.
+> Axios is the declared HTTP client standard but may not yet be installed. The instruction
+> system treats it as the baseline and provides setup guidance in the `frontend-foundation` skill.
 
 ---
 
@@ -85,9 +88,13 @@ competing conventions.
 
 ### For UI tasks
 1. Read `DESIGN.md` before creating or changing UI.
-2. Follow `.github/instructions/40-ui-consistency.instructions.md` for component patterns.
-3. Follow `.github/instructions/45-design-system.instructions.md` for Botanical Archive
+2. Follow `.github/instructions/26-ui-component-boundaries.instructions.md` before
+   extracting or moving components into shared/module/surface folders.
+3. Follow `.github/instructions/40-ui-consistency.instructions.md` for component patterns.
+4. Follow `.github/instructions/45-design-system.instructions.md` for Botanical Archive
    tokens, typography, and storefront/admin visual differences.
+5. Follow `.github/instructions/55-vietnamese-content-localization.instructions.md` when
+   changing displayed website copy to Vietnamese without changing layout or behavior.
 
 ### For VS Code Copilot tasks
 - Use prompts from `.github/prompts/` as starting points.

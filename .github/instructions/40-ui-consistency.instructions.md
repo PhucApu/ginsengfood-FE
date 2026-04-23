@@ -28,7 +28,7 @@ toolbars, filters, dialogs, and shared components.
   for final UI.
 - Do not create new component-scoped `.css` or `.module.css` files.
 - Do not use inline `style={{ }}` objects for new UI elements.
-- Preserve existing `front-end/src/index.css` custom properties until a dedicated Tailwind
+- Preserve existing `front-end/src/app/globals.css` custom properties until a dedicated Tailwind
   token setup maps or replaces them safely.
 
 ---

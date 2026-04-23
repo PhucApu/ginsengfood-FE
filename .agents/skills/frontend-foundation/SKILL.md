@@ -38,20 +38,21 @@ conventions, and TypeScript configuration — the baseline everything else build
 ## Required inputs
 
 - Access to `front-end/package.json` (to audit current installations)
-- Access to `front-end/vite.config.ts` (to confirm plugin configuration)
+- Access to `front-end/next.config.ts` (to confirm Next.js configuration)
+- Access to `front-end/postcss.config.mjs` (to confirm Tailwind PostCSS plugin setup)
 - Access to `front-end/src/` (to understand current structure)
-- Explicit statement of whether this is: install Tailwind, install Axios, create folders, or all three
+- Explicit statement of whether this is: install Axios, create folders, or configure environment variables
 
 ---
 
 ## File reading order
 
 1. `front-end/package.json` — confirm what is installed
-2. `front-end/vite.config.ts` — current plugin setup
-3. `front-end/tsconfig.app.json` — TypeScript target and paths
-4. `front-end/src/main.tsx` — app entry point, provider setup
-5. `front-end/src/App.tsx` — root component
-6. `front-end/src/index.css` — existing styles (do not delete)
+2. `front-end/next.config.ts` — current Next.js configuration
+3. `front-end/postcss.config.mjs` — Tailwind PostCSS plugin setup
+4. `front-end/tsconfig.json` — TypeScript target and paths
+5. `front-end/src/app/layout.tsx` — root layout, global fonts, providers
+6. `front-end/src/app/globals.css` — existing styles (do not delete)
 7. `.env` / `.env.local` if present — environment variable state
 
 ---
@@ -59,14 +60,14 @@ conventions, and TypeScript configuration — the baseline everything else build
 ## Implementation checklist
 
 ### Folder structure
-- [ ] `src/app/` exists (app shell: providers, router bootstrap, root layout)
+- [ ] `src/app/` exists (Next.js App Router: root layout, route groups, providers)
 - [ ] `src/features/` exists (feature module root)
 - [ ] `src/shared/` exists with `components/`, `hooks/`, `types/` subfolders
 - [ ] `src/api/` exists with `client.ts`, `dto/`, `adapters/` subfolders
 
 ### Axios setup
 - [ ] `axios` is listed in `package.json` dependencies (install: `npm install axios`)
-- [ ] `src/api/client.ts` exists and exports an Axios instance using `VITE_API_BASE_URL`
+- [ ] `src/api/client.ts` exists and exports an Axios instance using `NEXT_PUBLIC_API_BASE_URL`
 - [ ] No raw `axios.get/post` calls exist outside `src/api/`
 
 ```ts
@@ -74,32 +75,35 @@ conventions, and TypeScript configuration — the baseline everything else build
 import axios from 'axios';
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 ```
 
 ### Tailwind CSS setup
-- [ ] `tailwindcss` is installed (install: `npm install -D tailwindcss @tailwindcss/vite`)
-- [ ] `vite.config.ts` includes the Tailwind Vite plugin
-- [ ] `src/index.css` includes the Tailwind import directive (`@import "tailwindcss"`)
-- [ ] Existing CSS custom properties in `src/index.css` are preserved
+- [ ] `tailwindcss` and `@tailwindcss/postcss` are installed (already in `devDependencies`)
+- [ ] `postcss.config.mjs` includes the `@tailwindcss/postcss` plugin
+- [ ] `src/app/globals.css` includes the Tailwind import directive (`@import "tailwindcss"`)
+- [ ] Existing CSS custom properties in `src/app/globals.css` are preserved
+- [ ] Do not add a separate `tailwind.config.js` — Tailwind v4 uses PostCSS only
 
-```ts
-// vite.config.ts — with Tailwind
-import tailwindcss from '@tailwindcss/vite';
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-});
+```mjs
+// postcss.config.mjs — already configured
+const config = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+export default config;
 ```
 
 ```css
-/* src/index.css — top of file */
+/* src/app/globals.css — top of file */
 @import "tailwindcss";
 /* preserve existing custom properties below */
 ```
 
 ### Environment variables
-- [ ] `.env.example` exists documenting `VITE_API_BASE_URL=`
+- [ ] `.env.example` exists documenting `NEXT_PUBLIC_API_BASE_URL=`
 - [ ] `.env.local` is git-ignored
 - [ ] `.gitignore` (in `front-end/`) includes `.env.local`
 
@@ -109,15 +113,15 @@ export default defineConfig({
 
 - [ ] `npm run lint` passes with no errors after changes
 - [ ] `npm run build` passes without errors
-- [ ] `import.meta.env.VITE_API_BASE_URL` is used in `client.ts` (not a hardcoded URL)
+- [ ] `process.env.NEXT_PUBLIC_API_BASE_URL` is used in `client.ts` (not a hardcoded URL)
 - [ ] Tailwind utility classes render correctly in the dev server
 
 ---
 
 ## Common mistakes to avoid
 
-- Do not delete `src/index.css` or its custom properties when adding Tailwind — add the import at the top.
-- Do not configure `tailwind.config.js` separately — use the Vite plugin approach (`@tailwindcss/vite`) which is the Tailwind v4 standard.
+- Do not delete `src/app/globals.css` or its custom properties when working with Tailwind — the file already has `@import "tailwindcss"`.
+- Do not configure `tailwind.config.js` separately — use the PostCSS plugin approach (`@tailwindcss/postcss`) which is the Tailwind v4 standard for Next.js.
 - Do not use `@tailwind base/components/utilities` directives — use `@import "tailwindcss"` for Tailwind v4.
 - Do not create a `src/styles/` folder for new global CSS — use Tailwind utilities in JSX.
 - Do not hardcode `http://localhost:3000` or any URL in `client.ts`.
@@ -139,7 +143,7 @@ front-end/
       client.ts       # Axios instance
       dto/            # created
       adapters/       # created
-  .env.example        # documents VITE_API_BASE_URL
+  .env.example        # documents NEXT_PUBLIC_API_BASE_URL
 ```
 
-Plus: Tailwind installed and configured in `vite.config.ts` + `index.css`.
+Plus: Tailwind installed and configured in `next.config.ts` + `front-end/src/app/globals.css`.

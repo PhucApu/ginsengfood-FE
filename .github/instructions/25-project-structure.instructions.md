@@ -36,18 +36,17 @@ for the user/account domain module when needed.
 front-end/
   src/
     app/
-      App.tsx
-      providers/
-        AppProviders.tsx
-      router/
-        index.tsx
-        storefront.routes.tsx
-        admin.routes.tsx
-      layouts/
-        StorefrontLayout.tsx
-        AdminLayout.tsx
-      guards/
-        RequireAdmin.tsx
+      layout.tsx              # Root layout (html, body, fonts, metadata)
+      page.tsx                # Home route /
+      providers.tsx           # 'use client' global React context providers
+      (storefront)/           # Route group — storefront surface (no URL segment)
+        layout.tsx            # Storefront surface layout (navbar, footer)
+        <module>/             # e.g. products/, about/
+          page.tsx            # Thin route file — renders feature component
+      (admin)/                # Route group — admin surface (no URL segment)
+        layout.tsx            # Admin surface layout
+        <module>/
+          page.tsx            # Thin route file — renders feature component
 
     api/
       client.ts
@@ -65,13 +64,11 @@ front-end/
         assets/
 
         storefront/
-          pages/
           components/
           hooks/
           assets/
 
         admin/
-          pages/
           components/
           hooks/
           assets/
@@ -83,6 +80,8 @@ front-end/
       utils/
       constants/
       assets/
+
+    middleware.ts             # Next.js edge middleware for route protection
 ```
 
 Create folders only when they are actually needed by the task. Do not add empty business
@@ -96,12 +95,15 @@ modules just to match this example.
 
 Put app-wide wiring in `src/app/`:
 
-- Global providers in `src/app/providers/`.
-- Route definitions in `src/app/router/`.
-- Layouts in `src/app/layouts/`.
-- Route guards in `src/app/guards/`.
+- Root layout in `src/app/layout.tsx`.
+- Global providers in `src/app/providers.tsx` (must be a `'use client'` component).
+- Route groups: `src/app/(storefront)/` for storefront routes, `src/app/(admin)/` for admin routes.
+- Surface layouts in `src/app/(storefront)/layout.tsx` and `src/app/(admin)/layout.tsx`.
+- Route protection via `src/middleware.ts` (Next.js edge middleware).
+- Add `'use client'` only to components that use hooks, events, or browser APIs. Default is Server Component.
 
-`src/app/` must not contain feature-specific UI, API calls, DTOs, or business rules.
+`src/app/` route files (`page.tsx`, `layout.tsx`) must be thin. They import and render feature components from `src/features/`.
+`src/app/` must not contain feature-specific business logic.
 
 ### Feature modules
 
@@ -132,23 +134,21 @@ src/features/products/
     useProducts.ts
 
   storefront/
-    pages/
-      ProductListPage.tsx
-      ProductDetailPage.tsx
     components/
       ProductCard.tsx
+      ProductListSection.tsx
+      ProductDetailSection.tsx
 
   admin/
-    pages/
-      ProductManagementPage.tsx
-      ProductEditPage.tsx
     components/
       ProductTable.tsx
       ProductForm.tsx
 ```
 
-Use `pages/` for route-level components. Use `components/` for smaller UI pieces that belong
-only to that module and surface.
+Feature components are imported by thin `page.tsx` files in `src/app/(storefront)/<module>/page.tsx`
+or `src/app/(admin)/<module>/page.tsx`. Feature folders do **not** contain Next.js route files.
+
+Use `components/` for UI pieces that belong only to that module and surface.
 
 ### Shared code
 
@@ -250,9 +250,9 @@ If both surfaces need the same asset, move it to the module root `assets/` folde
 
 ## Naming rules
 
-- Route-level components end with `Page`: `ProductListPage.tsx`, `AdminDashboardPage.tsx`.
-- Layout components end with `Layout`: `AdminLayout.tsx`.
-- Guard components start with `Require`: `RequireAdmin.tsx`.
+- Route-level page components are `page.tsx` files in `src/app/`; feature content components use descriptive names like `ProductListSection.tsx`.
+- Layout files are named `layout.tsx` in their route group folder.
+- Route protection goes in `src/middleware.ts`.
 - Hooks start with `use`: `useProducts.ts`.
 - DTO files use `.dto.ts`: `product.dto.ts`.
 - Adapter files use `.adapter.ts`: `product.adapter.ts`.
@@ -265,11 +265,11 @@ If both surfaces need the same asset, move it to the module root `assets/` folde
 
 - Do not create parallel top-level trees like `src/user/` and `src/admin/` for business modules.
 - Do not duplicate API service functions separately for storefront and admin if they use the same contract.
-- Do not put route pages directly in `src/`.
+- Do not put route pages directly in `src/features/` — route files (`page.tsx`) belong in `src/app/`.
 - Do not put reusable UI inside one feature just because it was first used there.
 - Do not dump feature-specific images into `src/assets/` by default.
 - Do not put React-imported UI images in `public/` unless a stable public URL is required.
-- Do not keep scaffold assets such as Vite or React logos in production UI.
+- Do not keep scaffold assets such as Next.js or React logos in production UI.
 - Do not create fake modules for domains that do not exist yet.
 - Do not move existing files during an unrelated task.
 

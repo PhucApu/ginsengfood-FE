@@ -45,8 +45,8 @@ If the API contract is unknown: create placeholder DTOs with `// TODO: replace w
 
 ## File reading order
 
-1. `front-end/package.json` — confirm router and Axios are installed
-2. `front-end/src/app/` — find the router file and understand route registration
+1. `front-end/package.json` — confirm Axios is installed
+2. `front-end/src/app/` — understand the App Router structure and existing route groups
 3. `front-end/src/features/` — understand existing feature naming conventions
 4. `front-end/src/shared/components/` — find reusable components to use
 5. `front-end/src/api/client.ts` — confirm the Axios client exists
@@ -61,16 +61,27 @@ If the API contract is unknown: create placeholder DTOs with `// TODO: replace w
 - [ ] `src/features/<feature>/types.ts` — domain type definitions
 - [ ] `src/features/<feature>/api.ts` — API service function(s) using `apiClient`
 - [ ] `src/features/<feature>/hooks/use<Data>.ts` — data hook wrapping the service
-- [ ] `src/features/<feature>/components/<ScreenName>.tsx` — page component
+- [ ] `src/features/<feature>/<surface>/components/<ScreenContent>.tsx` — feature UI component
+
+### Route registration (Next.js App Router)
+- [ ] Create `src/app/(storefront)/<route>/page.tsx` for storefront pages
+- [ ] Create `src/app/(admin)/<route>/page.tsx` for admin pages
+- [ ] The `page.tsx` file is thin — it imports and renders the feature component
+- [ ] Add `'use client'` to the feature component only if it uses hooks, events, or browser APIs
+
+```tsx
+// src/app/(storefront)/products/page.tsx
+import { ProductListSection } from '@/features/products/storefront/components/ProductListSection';
+
+export default function ProductsPage() {
+  return <ProductListSection />;
+}
+```
 
 ### API layer (if not yet set up for this domain)
 - [ ] DTO added to `src/api/dto/<domain>.dto.ts`
 - [ ] Adapter added to `src/api/adapters/<domain>.adapter.ts`
 - [ ] Service function in `src/features/<feature>/api.ts` calls through `apiClient`
-
-### Route registration
-- [ ] Route registered in `src/app/` router file (if routing is configured)
-- [ ] If no router is installed, document that the route is not yet wired
 
 ### UI requirements
 - [ ] Loading state: spinner or skeleton while data fetches
@@ -107,18 +118,27 @@ If the API contract is unknown: create placeholder DTOs with `// TODO: replace w
 
 ```
 front-end/src/
+  app/
+    (storefront)/
+      <route>/
+        page.tsx              # thin Next.js route file
+    (admin)/
+      <route>/
+        page.tsx              # thin Next.js route file
+
   features/
     <feature>/
-      components/
-        <ScreenName>.tsx    # page component
+      <surface>/
+        components/
+          <ScreenContent>.tsx # feature UI component
       hooks/
-        use<Data>.ts        # data hook
-      api.ts                # service function
-      types.ts              # domain types
+        use<Data>.ts          # data hook
+      api.ts                  # service function
+      types.ts                # domain types
 
   api/
     dto/
-      <domain>.dto.ts       # raw API types
+      <domain>.dto.ts         # raw API types
     adapters/
-      <domain>.adapter.ts   # DTO → domain mapper
+      <domain>.adapter.ts     # DTO → domain mapper
 ```

@@ -11,9 +11,10 @@
 
 | Property | Value |
 |---|---|
-| Framework | React 19 + TypeScript + Vite |
+| Framework | **Next.js 16** + React 19 + TypeScript (App Router) |
+| Build tool | Next.js built-in bundler (Turbopack in dev) |
 | HTTP client | **Axios** (project standard — install if not yet present) |
-| Styling system | **Tailwind CSS** (project standard — install and configure if not yet present) |
+| Styling system | **Tailwind CSS v4** via `@tailwindcss/postcss` |
 | Package manager | **npm** — always use `npm` commands, never yarn or pnpm |
 | App root | `front-end/` inside the repository root |
 | Git root | repository root (one level above `front-end/`) |
@@ -22,15 +23,16 @@
 
 ## 2. Repository maturity
 
-**Near-initial scaffold.**
+**Initial scaffold with Next.js App Router.**
 
-As of the initial audit:
-- The Vite + React + TypeScript scaffold is present in `front-end/`.
+As of the current audit:
+- The Next.js 16 + React 19 + TypeScript scaffold is present in `front-end/`.
+- Tailwind CSS v4 is installed via `@tailwindcss/postcss` and configured in `postcss.config.mjs`.
 - Axios is **not yet installed** but is the declared HTTP client standard.
-- Tailwind CSS is **not yet installed** but is the declared styling standard.
-- There is no router, no API layer, no shared UI, no state management, and no test setup.
+- Routing is file-system based (Next.js App Router) — no React Router is needed or used.
+- There is no API layer, no shared UI, no state management, and no test setup.
 - All architecture conventions below represent the first-defined baseline for this project.
-- Existing CSS in `front-end/src/index.css` uses custom properties; preserve these during any Tailwind migration.
+- CSS in `front-end/src/app/globals.css` uses `@import "tailwindcss"` and custom properties; preserve these.
 
 ---
 
@@ -39,10 +41,11 @@ As of the initial audit:
 Before editing any file, read:
 
 1. `front-end/package.json` — confirm what is installed.
-2. `front-end/vite.config.ts` — confirm current plugin configuration.
-3. `front-end/src/` — understand what already exists.
-4. The full content of any file you intend to modify.
-5. Any existing feature or API code that your change will interact with.
+2. `front-end/next.config.ts` — confirm current Next.js configuration.
+3. `front-end/postcss.config.mjs` — confirm Tailwind PostCSS plugin setup.
+4. `front-end/src/` — understand what already exists.
+5. The full content of any file you intend to modify.
+6. Any existing feature or API code that your change will interact with.
 
 If a convention is not yet established, define a lean project default, apply it, and note it
 explicitly in your output as `[NEW CONVENTION]`.
@@ -54,11 +57,18 @@ explicitly in your output as `[NEW CONVENTION]`.
 ```
 front-end/
   src/
-    app/                  # App shell: providers, layouts, router, route guards
-      providers/
-      router/
-      layouts/
-      guards/
+    app/                  # Next.js App Router: file-system routing, root layout, providers
+      layout.tsx          # Root layout (html, body, global fonts, metadata)
+      page.tsx            # Home route /
+      providers.tsx       # 'use client' component wrapping global React context providers
+      (storefront)/       # Route group: storefront surface (no URL segment added)
+        layout.tsx        # Storefront surface layout (navbar, footer)
+        <module>/         # e.g. products/, about/
+          page.tsx        # Storefront route — thin file that renders feature component
+      (admin)/            # Route group: admin surface (no URL segment added)
+        layout.tsx        # Admin surface layout
+        <module>/
+          page.tsx        # Admin route — thin file that renders feature component
     assets/               # App-wide imported assets: brand logos, global imagery, app shell assets
     features/             # Feature modules (one folder per business domain)
       <module>/
@@ -68,13 +78,11 @@ front-end/
         components/       # Components shared by storefront/admin in this module only
         assets/           # Module assets shared by storefront/admin in this module only
         storefront/       # Customer-facing sales UI for this module
-          pages/
-          components/
+          components/     # Feature UI components (imported by App Router page.tsx files)
           hooks/
           assets/         # Storefront-only images and static assets for this module
         admin/            # Admin management UI for this module
-          pages/
-          components/
+          components/     # Admin UI components (imported by App Router page.tsx files)
           hooks/
           assets/         # Admin-only images and static assets for this module
     shared/
@@ -89,6 +97,7 @@ front-end/
       dto/                # Raw API response type definitions (DTO = what the API returns)
       adapters/           # Mappers: transform raw DTO types into domain types
       <domain>.ts         # Domain-scoped API service functions
+    middleware.ts         # Next.js edge middleware for route protection
 ```
 
 **Rules:**
@@ -98,6 +107,17 @@ front-end/
 - Do not scatter Axios calls directly in component files.
 - Do not put shared UI in a feature folder.
 - Do not put feature-specific business logic in `shared/`.
+- Before extracting or placing UI components, classify them as page-only, surface-specific,
+  module-shared, app-shell, or shared UI.
+- Header, footer, navbar, and layout chrome are not automatically shared. Put them in
+  `src/app/` only when they belong to the whole app or a whole surface; otherwise keep them
+  under the closest feature/surface.
+- Promote components to `src/shared/components/` only after real cross-module or
+  cross-surface reuse, with generic props and no feature-specific API calls, assets, route
+  paths, or business copy.
+- During HTML/CSS/JS conversion, keep source-specific sections near the target page first
+  and document likely reusable candidates as `[PROMOTE LATER]` instead of moving them to
+  `shared/` prematurely.
 - Do not create parallel top-level trees such as `src/user/` and `src/admin/` for business modules.
 - Place images and static assets next to their closest owner:
   - `src/assets/` for app-wide imported assets.
@@ -123,10 +143,25 @@ front-end/
 | Language | React functional components + TypeScript | No class components |
 | State | `useState` / `useReducer` local first | Add shared state only when clearly needed |
 | Data fetching | Custom hooks wrapping Axios calls | No raw Axios in JSX return |
-| Routing | React Router v6+ when needed | Not yet installed; do not assume it exists |
+| Routing | **Next.js App Router** | File-system based; no React Router needed |
 | Forms | Controlled or uncontrolled React | No form library assumed yet |
 | Types | Explicit interface / type declarations | No `any`, no implicit `unknown` |
 | Tests | Not configured | Do not fabricate test scripts |
+
+### Display content language
+
+- User-visible website copy should be localized to Vietnamese when the task requests
+  Vietnamese content or copy translation.
+- Copy-only localization must preserve component structure, layout classes, data flow,
+  routes, API contracts, and existing interactions.
+- Edit only rendered copy: headings, labels, CTAs, navigation text, helper/error/empty
+  messages, placeholders, alt/title/aria text, and string data that renders directly.
+- Do not translate identifiers, component names, type names, API fields, route paths,
+  environment keys, CSS classes, Tailwind tokens, asset filenames, test selectors, or icon
+  names.
+- If Vietnamese text is longer than the source copy, prefer concise natural phrasing before
+  changing layout. Report `[LOCALIZATION RISK]` if the current layout cannot safely fit the
+  translated copy without a design change.
 
 ---
 
@@ -141,7 +176,7 @@ front-end/
   export interface ProductDto { /* fields unknown */ }
   ```
 - All base URLs go in environment variables (`.env`, `.env.local`).
-- The Axios instance (`src/api/client.ts`) reads `import.meta.env.VITE_API_BASE_URL`.
+- The Axios instance (`src/api/client.ts`) reads `process.env.NEXT_PUBLIC_API_BASE_URL`.
 
 ---
 
@@ -150,8 +185,8 @@ front-end/
 - Implement one concern per task.
 - Do not edit unrelated files even if you notice issues in them — document them separately.
 - Do not destructively rewrite working code.
-- Do not delete `front-end/src/index.css` or its custom properties without an explicit instruction.
-- When introducing Tailwind, add it alongside existing styles first.
+- Do not delete `front-end/src/app/globals.css` or its custom properties without an explicit instruction.
+- Tailwind CSS v4 is already configured via `@tailwindcss/postcss`; do not add a separate `tailwind.config.js`.
 - Introduce new dependencies only if they are part of the declared stack or are explicitly requested.
 
 ---
@@ -161,11 +196,13 @@ front-end/
 Run from `front-end/` directory:
 
 ```bash
-npm run lint      # ESLint check (flat config, catches TypeScript and React rules)
-npm run build     # TypeScript compile (tsc -b) + Vite production build
+npm run lint      # ESLint check (Next.js flat config, catches TypeScript and React rules)
+npm run build     # next build — includes TypeScript check + production bundle
+npm run start     # start production server (after build)
 ```
 
 > There is no separate `typecheck` script. TypeScript errors surface through `npm run build`.
+> There is no `preview` script. Use `npm run start` after `npm run build` to preview.
 > There is no test script. Do not invent one.
 
 A task is **done** when:
@@ -214,7 +251,7 @@ After completing any implementation task, report:
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **ginsengfood-FE** (24 symbols, 24 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **ginsengfood-FE** (246 symbols, 277 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

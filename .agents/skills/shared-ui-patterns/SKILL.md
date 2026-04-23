@@ -13,6 +13,9 @@ Creating and maintaining the shared, reusable Tailwind CSS-based UI components t
 used across multiple screens in ginsengfood-FE. Components must follow the Botanical
 Archive design system in `DESIGN.md`.
 
+Use `ui-component-boundary-audit` first when it is unclear whether a component is truly
+shared or should remain page-only, surface-specific, module-shared, or app-shell.
+
 ---
 
 ## When to use this skill
@@ -46,10 +49,11 @@ Archive design system in `DESIGN.md`.
 1. `DESIGN.md` - Botanical Archive tokens and visual rules
 2. `.github/instructions/40-ui-consistency.instructions.md` - component patterns
 3. `.github/instructions/45-design-system.instructions.md` - design-system enforcement
-4. `front-end/src/shared/components/` - existing shared components
-5. Every `.tsx` file that already uses the pattern being standardized
-6. `front-end/src/index.css` - existing custom properties (preserve them)
-7. `front-end/package.json` - confirm `clsx` or similar is installed if conditional classes are needed
+4. `.github/instructions/26-ui-component-boundaries.instructions.md` - confirm shared ownership
+5. `front-end/src/shared/components/` - existing shared components
+6. Every `.tsx` file that already uses the pattern being standardized
+7. `front-end/src/app/globals.css` - existing custom properties (preserve them)
+8. `front-end/package.json` - confirm `clsx` or similar is installed if conditional classes are needed
 
 ---
 
@@ -146,7 +150,9 @@ const statusStyles: Record<string, string> = {
 - Do not use string concatenation for conditional Tailwind classes without `clsx` or `cn`; it creates unmaintainable code.
 - Do not skip the `disabled` state on buttons.
 - Do not create a shared component for a pattern used only once; wait until it appears in two or more places.
-- Do not remove the existing `index.css` custom properties when adding Tailwind components.
+- Do not create a shared component for header, footer, navbar, hero, carousel, or campaign
+  sections unless the component is truly app/surface-wide or cross-module with generic props.
+- Do not remove the existing `front-end/src/app/globals.css` custom properties when adding Tailwind components.
 
 ---
 

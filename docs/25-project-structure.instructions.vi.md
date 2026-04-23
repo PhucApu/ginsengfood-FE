@@ -41,18 +41,17 @@ domain module tài khoản/người dùng khi cần.
 front-end/
   src/
     app/
-      App.tsx
-      providers/
-        AppProviders.tsx
-      router/
-        index.tsx
-        storefront.routes.tsx
-        admin.routes.tsx
-      layouts/
-        StorefrontLayout.tsx
-        AdminLayout.tsx
-      guards/
-        RequireAdmin.tsx
+      layout.tsx              # Root layout (html, body, fonts, metadata)
+      page.tsx                # Home route /
+      providers.tsx           # 'use client' global React context providers
+      (storefront)/           # Route group — bề mặt storefront (không thêm URL segment)
+        layout.tsx            # Storefront surface layout (navbar, footer)
+        <module>/             # ví dụ products/, about/
+          page.tsx            # File route mỏng — render feature component
+      (admin)/                # Route group — bề mặt admin (không thêm URL segment)
+        layout.tsx            # Admin surface layout
+        <module>/
+          page.tsx            # File route mỏng — render feature component
 
     api/
       client.ts
@@ -70,13 +69,11 @@ front-end/
         assets/
 
         storefront/
-          pages/
           components/
           hooks/
           assets/
 
         admin/
-          pages/
           components/
           hooks/
           assets/
@@ -88,6 +85,8 @@ front-end/
       utils/
       constants/
       assets/
+
+    middleware.ts             # Next.js edge middleware để bảo vệ route
 ```
 
 Chỉ tạo folder khi task thật sự cần. Không thêm business module rỗng chỉ để khớp ví dụ.
@@ -100,11 +99,14 @@ Chỉ tạo folder khi task thật sự cần. Không thêm business module rỗ
 
 Đặt phần wiring cấp ứng dụng trong `src/app/`:
 
-- Global providers trong `src/app/providers/`.
-- Route definitions trong `src/app/router/`.
-- Layouts trong `src/app/layouts/`.
-- Route guards trong `src/app/guards/`.
+- Root layout trong `src/app/layout.tsx`.
+- Global providers trong `src/app/providers.tsx` (phải là `'use client'` component).
+- Route groups: `src/app/(storefront)/` cho storefront routes, `src/app/(admin)/` cho admin routes.
+- Surface layouts trong `src/app/(storefront)/layout.tsx` và `src/app/(admin)/layout.tsx`.
+- Route protection qua `src/middleware.ts` (Next.js edge middleware).
+- Chỉ thêm `'use client'` vào component dùng hooks, event, hoặc browser API. Mặc định là Server Component.
 
+Các file route trong `src/app/` (`page.tsx`, `layout.tsx`) phải mỏng. Chúng import và render feature components từ `src/features/`.
 `src/app/` không được chứa UI riêng của feature, API calls, DTOs, hoặc business rules.
 
 ### Feature modules
@@ -136,23 +138,20 @@ src/features/products/
     useProducts.ts
 
   storefront/
-    pages/
-      ProductListPage.tsx
-      ProductDetailPage.tsx
     components/
       ProductCard.tsx
+      ProductListSection.tsx
 
   admin/
-    pages/
-      ProductManagementPage.tsx
-      ProductEditPage.tsx
     components/
       ProductTable.tsx
       ProductForm.tsx
 ```
 
-Dùng `pages/` cho route-level components. Dùng `components/` cho các UI nhỏ hơn chỉ thuộc
-module và bề mặt đó.
+Feature components được import bởi các file `page.tsx` mỏng trong `src/app/(storefront)/<module>/page.tsx`
+hoặc `src/app/(admin)/<module>/page.tsx`. Feature folders không chứa file route Next.js.
+
+Dùng `components/` cho các UI nhỏ hơn chỉ thuộc module và bề mặt đó.
 
 ### Shared code
 
@@ -254,9 +253,9 @@ module hoặc vào `shared/assets/` khi asset có thể tái sử dụng xuyên 
 
 ## Quy tắc đặt tên
 
-- Route-level components kết thúc bằng `Page`: `ProductListPage.tsx`, `AdminDashboardPage.tsx`.
-- Layout components kết thúc bằng `Layout`: `AdminLayout.tsx`.
-- Guard components bắt đầu bằng `Require`: `RequireAdmin.tsx`.
+- Route-level page components là file `page.tsx` trong `src/app/`; feature content components dùng tên mô tả như `ProductListSection.tsx`.
+- Layout files được đặt tên là `layout.tsx` trong folder route group tương ứng.
+- Route protection đặt trong `src/middleware.ts`.
 - Hooks bắt đầu bằng `use`: `useProducts.ts`.
 - DTO files dùng `.dto.ts`: `product.dto.ts`.
 - Adapter files dùng `.adapter.ts`: `product.adapter.ts`.
@@ -269,11 +268,11 @@ module hoặc vào `shared/assets/` khi asset có thể tái sử dụng xuyên 
 
 - Không tạo parallel top-level trees như `src/user/` và `src/admin/` cho business modules.
 - Không duplicate API service functions riêng cho storefront và admin nếu chúng dùng cùng contract.
-- Không đặt route pages trực tiếp trong `src/`.
+- Không đặt route pages (`page.tsx`) trong `src/features/` — file route thuộc `src/app/`.
 - Không đặt reusable UI vào một feature chỉ vì nó được dùng ở đó đầu tiên.
 - Không dồn ảnh riêng của feature vào `src/assets/` theo mặc định.
 - Không đặt ảnh UI được React import vào `public/` trừ khi cần public URL ổn định.
-- Không giữ scaffold assets như logo Vite hoặc React trong production UI.
+- Không giữ scaffold assets như logo Next.js hoặc React trong production UI.
 - Không tạo fake modules cho domains chưa tồn tại.
 - Không di chuyển file hiện có trong một task không liên quan.
 

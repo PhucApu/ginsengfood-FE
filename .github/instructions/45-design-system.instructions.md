@@ -96,7 +96,7 @@ When implementing or updating Tailwind tokens:
 - Map `DESIGN.md` snake_case tokens to Tailwind kebab-case classes.
 - Example: `surface_container_low` becomes `bg-surface-container-low`.
 - Keep color tokens semantic. Do not name tokens after one component.
-- Do not remove existing `front-end/src/index.css` custom properties unless a dedicated
+- Do not remove existing `front-end/src/app/globals.css` custom properties unless a dedicated
   migration task explicitly replaces them.
 - If Tailwind is not configured yet, document token usage as target behavior and keep the
   implementation minimal.

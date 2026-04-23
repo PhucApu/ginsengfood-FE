@@ -521,7 +521,7 @@ Use the admin interface for clarity and throughput.
 - Do not keep generated `bg-stone-*`, `text-stone-*`, `text-red-*`, or `bg-[#...]` classes in final React code when a semantic token exists.
 - Do not use default blue UI.
 - Do not use high-opacity hard shadows.
-- Preserve existing `front-end/src/index.css` custom properties until a dedicated Tailwind
+- Preserve existing `front-end/src/app/globals.css` custom properties until a dedicated Tailwind
   token setup replaces or maps them safely.
 - `test.html` can be used as visual reference, but production React components should use
   semantic tokens and shared components.
