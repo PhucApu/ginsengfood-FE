@@ -1,0 +1,29 @@
+# Codex project-scoped configuration for ginsengfood-FE
+# This file sets safe, minimal defaults for Codex agents working in this repository.
+# Canonical guidance is in AGENTS.md at the repository root.
+
+[project]
+# The app source lives inside the front-end/ subdirectory.
+# All relative paths in tasks should be interpreted from the repository root.
+app_root = "front-end"
+
+[shell]
+# Always run npm commands from the front-end/ directory.
+working_directory = "front-end"
+
+[behavior]
+# Read files before modifying them.
+inspect_before_edit = true
+
+# Do not auto-run destructive git operations (force push, hard reset, branch delete).
+# These require explicit user confirmation.
+safe_git_mode = true
+
+[verification]
+# Run these commands to verify work before declaring a task done.
+# Run from the front-end/ directory.
+lint_command = "npm run lint"
+build_command = "npm run build"
+
+# There is no test script in this repository. Do not invent one.
+test_command = ""
