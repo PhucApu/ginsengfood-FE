@@ -1,10 +1,5 @@
 import Image from 'next/image';
-
-interface NavLink {
-  icon: string;
-  label: string;
-  active: boolean;
-}
+import AccountSidebar from '@/features/account/storefront/components/AccountSidebar';
 
 interface QuickLink {
   icon: string;
@@ -22,14 +17,6 @@ interface OrderItem {
   imageAlt: string;
   action: string;
 }
-
-const NAV_LINKS: NavLink[] = [
-  { icon: 'account_circle', label: 'Hồ sơ cá nhân', active: true },
-  { icon: 'military_tech', label: 'Hạng thành viên', active: false },
-  { icon: 'history_edu', label: 'Lịch sử mua hàng', active: false },
-  { icon: 'location_on', label: 'Địa chỉ nhận hàng', active: false },
-  { icon: 'settings', label: 'Cài đặt', active: false },
-];
 
 const QUICK_LINKS: QuickLink[] = [
   { icon: 'edit', label: 'Sửa hồ sơ' },
@@ -63,9 +50,6 @@ const ORDERS: OrderItem[] = [
   },
 ];
 
-const SIDEBAR_AVATAR_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuA1y4g7GxsoRM9iHqUHGJ5sTYIspvDIW-6NPYNqt0MiO8BmXeY1klEgGS1At8bJcsOQGW1xu2cUrh_u79BbZZRgtKGrNIiVLcXPzOxUU_Ifg-eAY3LMhXvUoE8emW6fw8pLq5E1VMGL2oaRywPqXLOwGpFGAiqeU3OHO09h8mIBwxy6q7mad2-BgEXvpLEnSkWfEUe5rM0RvMSYaP2jQsohhvBCe7ECNqhzb8xjz6gSErQqto7ta2SOQA6jwjD4Dwk7j_jWrencNac';
-
 const WELCOME_AVATAR_URL =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDO5MCnZUITQZBfwPMnOU7PSvv5z3DC3VQDL9iL2JTIXSNd2oiq9pZZIgfz5Ty5cRrXz8ph0zOKykYYssKe9J637F9RLk5v1WXT_46C7-yArcKI2JH3TgX9-tG5Vz6IxwqstMcdyqvnuhqG9rgGAGArjuUEHPcxbm3JbFpoPoyr_N1uu_iSU9EA7MTVjscxB3U6yL3P8sD7TSI4FjIbtxbX95IdpJLshCLwMl67VsbPe9pyoKR5Gu8dANNAZU6Nxu23Q68zauK3XgY';
 
@@ -74,92 +58,47 @@ const AI_BANNER_IMAGE_URL =
 
 export default function MyAccountPage() {
   return (
-    <div className="flex bg-[#fbf9f5] text-[#1b1c1a] font-body antialiased">
+    <div className="max-w-screen-2xl mx-auto w-full px-4 md:px-8 py-10 flex flex-col md:flex-row gap-12 flex-grow">
       {/* ── Left Sidebar Nav ───────────────────────────────── */}
-      {/* sticky top-[92px]: compensates for StorefrontHeader height (py-6 + h-11 ≈ 92px) */}
-      <nav className="hidden lg:flex flex-col sticky top-[92px] self-start h-[calc(100vh-92px)] w-72 flex-shrink-0 bg-[#fbf9f5] border-r border-[#dfbfbc]/20 py-8 z-40">
-        {/* Brand */}
-        <div className="px-8 mb-12">
-          <h1 className="font-headline text-2xl font-bold text-[#570005] tracking-tighter italic">
-            SÂM QUÝ
-          </h1>
-        </div>
-
-        {/* Header Profile */}
-        <div className="px-8 mb-10 flex items-center gap-4">
-          <Image
-            src={SIDEBAR_AVATAR_URL}
-            alt="Ảnh đại diện cao cấp"
-            width={56}
-            height={56}
-            className="w-14 h-14 rounded-full object-cover shadow-[0_8px_40px_rgba(27,28,26,0.06)] border-2 border-white flex-shrink-0"
-          />
-          <div>
-            <h2 className="font-headline text-lg text-[#570005] font-bold leading-tight">
-              Chào mừng, Quý khách
-            </h2>
-            <p className="font-label text-xs text-[#735b2b] mt-1 font-medium tracking-wide">
-              Thành viên Bạch Kim
-            </p>
-          </div>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="flex-1 flex flex-col gap-2">
-          {NAV_LINKS.map((link) =>
-            link.active ? (
-              <a
-                key={link.label}
-                className="flex items-center gap-3 text-[#570005] font-bold bg-[#f5f3ef] rounded-l-full ml-4 pl-4 py-3 relative"
-                href="#"
-              >
-                <span
-                  className="material-symbols-outlined text-[20px]"
-                  style={{
-                    fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                  }}
-                >
-                  {link.icon}
-                </span>
-                <span className="font-label text-sm">{link.label}</span>
-                <div className="absolute right-0 top-0 h-full w-1 bg-[#570005] rounded-l-full" />
-              </a>
-            ) : (
-              <a
-                key={link.label}
-                className="flex items-center gap-3 text-[#1b1c1a]/70 pl-8 py-3 hover:text-[#570005] hover:pl-10 transition-all duration-[400ms]"
-                href="#"
-              >
-                <span className="material-symbols-outlined text-[20px]">{link.icon}</span>
-                <span className="font-label text-sm font-medium">{link.label}</span>
-              </a>
-            )
-          )}
-        </div>
-
-        {/* Upgrade CTA */}
-        <div className="px-8 mt-auto">
-          <button className="w-full py-3 rounded-full border border-[#dfbfbc]/40 text-[#735b2b] font-medium text-sm hover:bg-[#f5f3ef] transition-colors flex items-center justify-center gap-2">
-            Nâng cấp hạng
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-          </button>
-        </div>
-      </nav>
+      <AccountSidebar activeItem="profile" />
 
       {/* ── Main Content Canvas ────────────────────────────── */}
-      <main className="flex-1 bg-[#fbf9f5] pb-24">
-        <div className="max-w-5xl mx-auto p-6 md:p-12 space-y-12">
-          {/* Page Header */}
-          <header className="flex justify-between items-end mb-8">
-            <div>
-              <h1 className="font-headline text-4xl text-[#1b1c1a] tracking-tight">
-                Tổng quan tài khoản
-              </h1>
-              <p className="text-[#58413f] mt-2 text-sm">
-                Quản lý hành trình sức khỏe và ưu đãi của bạn.
-              </p>
-            </div>
-          </header>
+      <main className="flex-1 pb-24">
+        <div className="pb-8 space-y-8">
+          {/* Breadcrumbs */}
+          <nav aria-label="Breadcrumb" className="flex text-sm text-[#735b2b] font-medium">
+            <ol className="inline-flex items-center space-x-1 md:space-x-2">
+              <li className="inline-flex items-center">
+                <a href="#" className="hover:text-[#570005] transition-colors">
+                  Trang chủ
+                </a>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="material-symbols-outlined text-sm mx-1">chevron_right</span>
+                  <a href="#" className="hover:text-[#570005] transition-colors">
+                    Tài khoản
+                  </a>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="material-symbols-outlined text-sm mx-1">chevron_right</span>
+                  <span className="text-[#570005]">Hồ sơ cá nhân</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+
+          {/* Page heading */}
+          <div>
+            <h1 className="font-headline text-4xl text-primary tracking-tight mb-2">
+              Tổng quan tài khoản
+            </h1>
+            <p className="text-on-surface-variant text-sm">
+              Quản lý hành trình sức khỏe và ưu đãi của bạn.
+            </p>
+          </div>
 
           {/* Top Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

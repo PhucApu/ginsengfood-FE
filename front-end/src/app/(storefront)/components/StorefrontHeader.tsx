@@ -20,30 +20,42 @@ export default function StorefrontHeader() {
 
         {/* Navigation Links */}
         <nav className="hidden md:flex space-x-8">
-          <a
-            className="text-red-900 font-bold border-b-2 border-red-900 pb-1 hover:text-red-800 transition-colors duration-300 scale-95 active:opacity-80 transition-all font-headline tracking-tight"
-            href="#"
+          <Link
+            className="text-stone-600 font-medium hover:text-red-800 transition-colors duration-300 scale-95 active:opacity-80 transition-all font-headline tracking-tight"
+            href="/"
           >
-            Home
-          </a>
-          <a
+            Trang chủ
+          </Link>
+          <Link
             className="text-stone-600 font-medium hover:text-red-800 transition-colors duration-300 scale-95 active:opacity-80 transition-all font-headline tracking-tight"
             href="#"
           >
-            Shop
-          </a>
-          <a
+            Về chúng tôi
+          </Link>
+          <Link
             className="text-stone-600 font-medium hover:text-red-800 transition-colors duration-300 scale-95 active:opacity-80 transition-all font-headline tracking-tight"
-            href="#"
+            href="/products"
           >
-            About
-          </a>
-          <a
+            Sản phẩm
+          </Link>
+          <Link
             className="text-stone-600 font-medium hover:text-red-800 transition-colors duration-300 scale-95 active:opacity-80 transition-all font-headline tracking-tight"
-            href="#"
+            href="/gold_hour"
           >
-            Contact
-          </a>
+            Giờ Vàng
+          </Link>
+          <Link
+            className="text-stone-600 font-medium hover:text-red-800 transition-colors duration-300 scale-95 active:opacity-80 transition-all font-headline tracking-tight"
+            href="/memberships"
+          >
+            Thành viên
+          </Link>
+          <Link
+            className="text-stone-600 font-medium hover:text-red-800 transition-colors duration-300 scale-95 active:opacity-80 transition-all font-headline tracking-tight"
+            href="/news"
+          >
+            Bài viết / Kiến thức
+          </Link>
         </nav>
 
         {/* Trailing Icons */}

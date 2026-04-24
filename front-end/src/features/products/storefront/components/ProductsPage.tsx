@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ProductCard from './ProductCard';
+import FadeInSection from '@/shared/components/FadeInSection';
 
 type ViewMode = 'grid' | 'list';
 type CategoryId = 'all' | 'fresh' | 'red' | 'extract' | 'tea' | 'gift';
@@ -148,6 +149,7 @@ export default function ProductsPage() {
   return (
     <>
       {/* Main content area */}
+      <FadeInSection>
       <div className="pt-8 pb-28 md:pb-16 px-4 md:px-8 max-w-7xl mx-auto w-full flex flex-col md:flex-row gap-12">
         {/* Filter Sidebar — desktop only */}
         <aside className="hidden md:block w-72 flex-shrink-0 space-y-10">
@@ -336,6 +338,7 @@ export default function ProductsPage() {
           </div>
         </div>
       </div>
+      </FadeInSection>
 
       {/* Mobile Bottom Nav — fixed, mobile only */}
       {/* [PROMOTE LATER] — candidate for app-shell mobile nav once other surfaces need it */}

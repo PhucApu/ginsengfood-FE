@@ -10,7 +10,9 @@ export default function HomePage() {
   return (
     <>
       {/* ProminentBanner sits at the very top — no fade-in delay */}
-      <FadeInSection>
+      {/* relative z-10: ensures the hover dropdown is not clipped by the HeroSection's
+          FadeInSection wrapper, which also creates a stacking context via CSS transform */}
+      <FadeInSection className="relative z-10">
         <ProminentBanner />
       </FadeInSection>
 

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import FadeInSection from '@/shared/components/FadeInSection';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -111,6 +112,7 @@ export default function NewsPage() {
   return (
     <div className="pt-12 pb-24 px-6 md:px-12 max-w-screen-2xl mx-auto w-full">
       {/* Hero/Featured Section */}
+      <FadeInSection>
       <section className="mb-20">
         <div className="relative bg-[#ffffff] rounded-xl overflow-hidden group cursor-pointer flex flex-col md:flex-row">
           {/* Hero image */}
@@ -143,8 +145,10 @@ export default function NewsPage() {
           </div>
         </div>
       </section>
+      </FadeInSection>
 
       {/* Search & Filter Bar */}
+      <FadeInSection delay={100}>
       <section className="mb-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[#fbf9f5] p-4 rounded-xl">
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((cat) => (
@@ -174,8 +178,10 @@ export default function NewsPage() {
           </span>
         </div>
       </section>
+      </FadeInSection>
 
       {/* Article Grid */}
+      <FadeInSection delay={200}>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-20">
         {articles.map((article) => (
           <article
@@ -203,8 +209,10 @@ export default function NewsPage() {
           </article>
         ))}
       </section>
+      </FadeInSection>
 
       {/* Pagination */}
+      <FadeInSection delay={300}>
       <div className="flex justify-center items-center gap-4">
         <button
           disabled={currentPage === 1}
@@ -236,6 +244,7 @@ export default function NewsPage() {
           Trang sau <span className="material-symbols-outlined text-sm">arrow_forward</span>
         </button>
       </div>
+      </FadeInSection>
     </div>
   );
 }
